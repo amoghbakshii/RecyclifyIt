@@ -1,0 +1,76 @@
+<?php
+session_start();
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Establish a connection to the database
+    $db_host = 'localhost'; // replace with your actual database host
+    $db_user = 'root'; // replace with your actual database username
+    $db_pass = ''; // replace with your actual database password
+    $db_name = 'recyclifyit'; // replace with your actual database name
+
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+
+    // Check the connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Get form data
+    $name = $_POST['name'];
+    $company = $_POST['company'];
+    $mobile = $_POST['mobile'];
+    $email = $_POST['email'];
+    $producttype = $_POST['producttype'];
+    $quantity = $_POST['quantity'];
+
+    // Insert data into the 'form' table
+    $sql = "INSERT INTO form (name, company, mobile, email, producttype, quantity) 
+            VALUES ('$name', '$company', '$mobile', '$email', '$producttype', '$quantity')";
+
+    if ($conn->query($sql) === TRUE) {
+        $message = "Form data submitted successfully!      Thank You!";
+    } else {
+        $message = "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    // Close the database connection
+    $conn->close();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    /* ... (your existing styles) ... */
+
+    .success-message {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        margin-top: 20px;
+        border-radius: 5px;
+        text-align: center;
+        display: <?php echo isset($message) ? 'block' : 'none'; ?>; /* Hide initially */
+    }
+
+    /* Optional: Add animation for a more polished appearance */
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    /* Apply animation when message is hidden */
+    .success-message.hide {
+        animation: fadeOut 1s ease-out;
+    }
+</style>
+
+<body>
+<div class="success-message <?php echo isset($message) ? '' : 'hide'; ?>">
+    <?php echo isset($message) ? $message . ' <a href="home.php">Go to Home</a>' : ''; ?>
+</div>
+
+    <!-- ... (your existing HTML code) ... -->
+</body>
+</html>
